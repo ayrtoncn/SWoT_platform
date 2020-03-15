@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="CSPARQL-ReadyToGoPack-0.9.6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack-0.9.6.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack-0.9.6.zip!/CSPARQL-ReadyToGoPack/src/main/java" />
+    </SOURCES>
+  </library>
+</component>

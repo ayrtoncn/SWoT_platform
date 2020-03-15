@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="c-sparql">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-cep-api/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-cep-esper/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-common/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-core/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-core/src/test/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-sparql-api/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-sparql-jena/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-sparql-sesame/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-ui/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-engine-0.9.7.zip!/CSPARQL-engine-0.9.7/csparql-ui/src/test/java" />
+    </SOURCES>
+  </library>
+</component>

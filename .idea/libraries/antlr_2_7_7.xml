@@ -1,0 +1,64 @@
+<component name="libraryTable">
+  <library name="antlr-2.7.7">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/antlr-2.7.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/antlr-runtime-3.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/asm-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/cglib-2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/cglib-nodep-2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/commons-codec-1.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/commons-configuration-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/commons-httpclient-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/commons-io-2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/commons-lang-2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/commons-logging-1.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/csparql-cep-api-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/csparql-cep-esper-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/csparql-common-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/csparql-core-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/csparql-sparql-api-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/csparql-sparql-jena-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/csparql-sparql-sesame-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/esper-3.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/gson-2.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/httpclient-4.2.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/httpcore-4.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/jcl-over-slf4j-1.7.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/jena-arq-2.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/jena-arq-Percentile-2.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/jena-core-2.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/jena-iri-1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/jena-tdb-1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/log4j-1.2.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/rsp-services-api-0.4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-http-client-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-http-protocol-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-model-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-query-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-queryalgebra-evaluation-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-queryalgebra-model-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-queryparser-api-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-queryparser-serql-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-queryparser-sparql-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-queryresultio-api-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-queryresultio-sparqlxml-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-repository-api-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-repository-sparql-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-rio-api-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-rio-datatypes-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-rio-languages-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-rio-ntriples-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-sail-api-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-sail-inferencer-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-sail-memory-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/sesame-util-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/slf4j-api-1.7.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/slf4j-log4j12-1.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/stringtemplate-3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/xercesImpl-2.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../CSPARQL-ReadyToGoPack/lib/xml-apis-1.4.01.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
