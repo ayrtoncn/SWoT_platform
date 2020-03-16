@@ -135,39 +135,17 @@ class SWoT {
 
     // start RDF STREAMER
 
-    void addQuery(String query){
+    CsparqlQueryResultProxy addQuery(String query){
         CsparqlQueryResultProxy resultProxy = null;
         try{
             resultProxy = this.sparqlEngine.registerQuery(query, false);
         } catch(ParseException ex){
             logger.error(ex.getMessage(), ex)
         }
-        if (resultProxy != null) {
-            resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine));
-        }
+        return resultProxy;
     }
+//    if (resultProxy != null) {
+//        resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine));
+//    }
 }
-class RDFResultsFormatter extends ResultFormatter{
-    SWRLRuleEngine _ruleEngine;
-    OWLOntology _newOnto;
-    OWLReasoner _reasoner;
-    DefaultPrefixManager _prefixManager;
-    OWLOntologyManager _manager;
-    OWLDataFactory _owlDataFactory;
-    SQWRLQueryEngine _queryEngine;
-    RDFResultsFormatter(SWRLRuleEngine ruleEngine, OWLOntology newOnto, OWLReasoner reasoner,
-                        DefaultPrefixManager prefixManager, OWLOntologyManager manager, OWLDataFactory owlDataFactory, SQWRLQueryEngine queryEngine) {
-        this._ruleEngine = ruleEngine;
-        this._newOnto = newOnto;
-        this._reasoner = reasoner;
-        this._prefixManager = prefixManager;
-        this._manager = manager;
-        this._owlDataFactory = owlDataFactory;
-        this._queryEngine = queryEngine;
-    }
 
-    @Override
-    void update(Observable o, Object arg) {
-
-    }
-}
