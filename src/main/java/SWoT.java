@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
+import streamer.INWSRDFStreamTestGenerator;
 
 class SWoT {
     private static Logger logger = LoggerFactory.getLogger(SWoT.class);
@@ -133,7 +134,9 @@ class SWoT {
     CsparqlQueryResultProxy addQuery(String query) throws ParseException {
         CsparqlQueryResultProxy resultProxy = null;
         RdfStream rdfStream = new RdfStream("http://inwatersense.uni-pr.edu/stream");
+
         sparqlEngine.registerStream(rdfStream);
+
         resultProxy = this.sparqlEngine.registerQuery(query, false);
         return resultProxy;
     }
