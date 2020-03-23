@@ -133,16 +133,22 @@ class SWoT {
 
     CsparqlQueryResultProxy addQuery(String query) throws ParseException {
         CsparqlQueryResultProxy resultProxy = null;
-        RdfStream rdfStream = new RdfStream("http://inwatersense.uni-pr.edu/stream");
+        String streamUrl = query.substring(query.indexOf("FROM STREAM") + 13, query.indexOf("[RANGE") - 2);
+        RdfStream rdfStream = new INWSRDFStreamTestGenerator(streamUrl);
 
         sparqlEngine.registerStream(rdfStream);
+
+        final Thread t = new Thread((Runnable) rdfStream);
+        t.start();
 
         resultProxy = this.sparqlEngine.registerQuery(query, false);
         return resultProxy;
     }
-//    if (resultProxy != null) {
-//        resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine));
-//    }
+    void addObserver(CsparqlQueryResultProxy resultProxy, String converterPath){
+        if (resultProxy != null) {
+            resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine, converterPath));
+        }
+    }
     public OWLOntology getOntology() {
         return ontology;
     }
@@ -217,7 +223,9 @@ class SWoT {
             JSONArray queries = (JSONArray)jsonObject.get("queries");
             Iterator queriesIterator = queries.iterator();
             while(queriesIterator.hasNext()) {
-                swot.addQuery((String)queriesIterator.next());
+                CsparqlQueryResultProxy c = swot.addQuery((String)queriesIterator.next());
+                String converterPath = (String)jsonObject.get("SWRLOntologyConverterLocation");
+                swot.addObserver(c,converterPath);
             }
             System.out.println("Queries Loaded");
 
