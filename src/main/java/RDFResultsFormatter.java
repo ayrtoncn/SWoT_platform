@@ -6,6 +6,7 @@ import org.apache.jena.atlas.json.JsonArray;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.io.OWLXMLOntologyFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.NodeSet;
@@ -35,6 +36,7 @@ public class RDFResultsFormatter extends ResultFormatter {
 	SQWRLQueryEngine queryEngine;
 	String converterPath;
 	JSONArray results;
+	private OWLOntology converterOntology;
 
 	RDFResultsFormatter(SWRLRuleEngine ruleEngine, OWLOntology ontology, OWLReasoner reasoner,
 						DefaultPrefixManager prefixManager, OWLOntologyManager owlOntologyManager, OWLDataFactory owlDataFactory, SQWRLQueryEngine queryEngine, String converterPath, JSONArray results) {
@@ -103,8 +105,8 @@ public class RDFResultsFormatter extends ResultFormatter {
 
 	void loadOWLFromFile(InputStream inputStream) throws OWLOntologyCreationException, FileNotFoundException {
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-		OWLOntology owlOntology = man.loadOntologyFromOntologyDocument(inputStream);
-		for (OWLAxiom ax : owlOntology.getAxioms()) {
+		this.converterOntology = man.loadOntologyFromOntologyDocument(inputStream);
+		for (OWLAxiom ax : this.converterOntology.getAxioms()) {
 			this.owlOntologyManager.applyChange(new AddAxiom(this.ontology, ax));
 		}
 	};
@@ -125,10 +127,11 @@ public class RDFResultsFormatter extends ResultFormatter {
 		int numerator = 0;
 		long totProcTime = 0;
 		try {
-			FileInputStream fileInputStream = new FileInputStream(this.converterPath);
-			String text = getFileContent(fileInputStream);
+
 
 			for (final RDFTuple t : res) {
+				FileInputStream fileInputStream = new FileInputStream(this.converterPath);
+				String text = getFileContent(fileInputStream);
 				numerator++;
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 				Date date = new Date();
@@ -145,6 +148,7 @@ public class RDFResultsFormatter extends ResultFormatter {
 				text = text.replaceAll("&time", obsTime);
 				InputStream newFileInputStream = new ByteArrayInputStream(text.getBytes());
 				loadOWLFromFile(newFileInputStream);
+				saveOWL(ontology.getOWLOntologyManager().getOntologyFormat(ontology), owlOntologyManager, ontology, "condition.owl");
 				StopWatch stopWatch = new StopWatch();
 				stopWatch.start();
 				this.ruleEngine.infer();
@@ -180,13 +184,19 @@ public class RDFResultsFormatter extends ResultFormatter {
 					}
 					if(result.get("action").equals("PRINT") && correct){
 						printClassIndividuals(owlClass,state);
-						removeClassIndividuals(owlClass);
+
 					}
+					removeClassIndividuals(owlClass);
+
 				}
 
 
 				OWLClass tmpObservation = owlDataFactory.getOWLClass("ssn:Observation", this.prefixManager);
-				removeClassIndividuals(tmpObservation);
+				for (OWLAxiom ax : this.converterOntology.getAxioms()) {
+					owlOntologyManager.removeAxiom(ontology, ax);
+				}
+//				removeClassIndividuals(tmpObservation);
+				saveOWL(ontology.getOWLOntologyManager().getOntologyFormat(ontology), owlOntologyManager, ontology, "result.owl");
 
 			}
 		}catch (FileNotFoundException ex) {
@@ -236,6 +246,19 @@ public class RDFResultsFormatter extends ResultFormatter {
 		for (OWLNamedIndividual ind : individuals) {
 			String indName = ind.getIRI().toString().substring(ind.getIRI().toString().indexOf("#") + 1);
 			System.out.println(indName + " : " + state);
+		}
+	}
+
+	private static void saveOWL(OWLDocumentFormat format, OWLOntologyManager manager, OWLOntology newOnto, String name) {
+		File fileformated = new File("D:\\Code\\Semester 7\\Tugas Akhir\\InWaterSense\\Ontologies\\" + name);
+		OWLXMLOntologyFormat owlxmlFormat = new OWLXMLOntologyFormat();
+		if (format.isPrefixOWLOntologyFormat()) {
+			owlxmlFormat.copyPrefixesFrom(format.asPrefixOWLOntologyFormat());
+		}
+		try {
+			manager.saveOntology(newOnto, owlxmlFormat, IRI.create(fileformated.toURI()));
+		} catch (Exception e) {
+
 		}
 	}
 
