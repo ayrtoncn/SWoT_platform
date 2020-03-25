@@ -1,6 +1,10 @@
 import eu.larkc.csparql.common.RDFTable;
 import eu.larkc.csparql.common.RDFTuple;
 import eu.larkc.csparql.core.ResultFormatter;
+import eu.larkc.csparql.core.engine.CsparqlQueryResultProxy;
+import org.apache.jena.atlas.json.JsonArray;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -17,6 +21,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Set;
 
@@ -29,9 +34,10 @@ public class RDFResultsFormatter extends ResultFormatter {
 	OWLDataFactory owlDataFactory;
 	SQWRLQueryEngine queryEngine;
 	String converterPath;
+	JSONArray results;
 
 	RDFResultsFormatter(SWRLRuleEngine ruleEngine, OWLOntology ontology, OWLReasoner reasoner,
-						DefaultPrefixManager prefixManager, OWLOntologyManager owlOntologyManager, OWLDataFactory owlDataFactory, SQWRLQueryEngine queryEngine, String converterPath) {
+						DefaultPrefixManager prefixManager, OWLOntologyManager owlOntologyManager, OWLDataFactory owlDataFactory, SQWRLQueryEngine queryEngine, String converterPath, JSONArray results) {
 		this.ruleEngine = ruleEngine;
 		this.ontology = ontology;
 		this.reasoner = reasoner;
@@ -40,6 +46,7 @@ public class RDFResultsFormatter extends ResultFormatter {
 		this.owlDataFactory = owlDataFactory;
 		this.queryEngine = queryEngine;
 		this.converterPath = converterPath;
+		this.results = results;
 	}
 
 
@@ -146,19 +153,40 @@ public class RDFResultsFormatter extends ResultFormatter {
 				totProcTime = totProcTime + stopWatch.getTotalTimeMillis();
 				reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
 
-				OWLClass clstmpModerateBOD = owlDataFactory.getOWLClass("inwsr:ModerateBODMeasurement", prefixManager);
-				OWLClass clstmpGoodBOD = owlDataFactory.getOWLClass("inwsr:GoodBODMeasurement", prefixManager);
-				OWLClass clstmpHighBOD = owlDataFactory.getOWLClass("inwsr:HighBODMeasurement", prefixManager);
-				printModerateClassIndividuals(clstmpModerateBOD);  //prints also the pollution sources
-				printGoodHighClassIndividuals(clstmpHighBOD, "HIGH");//direct and indirect instances
-				printGoodHighClassIndividuals(clstmpGoodBOD, "GOOD");  //direct and indirect instances
-				removeClassIndividuals(clstmpModerateBOD);
-				removeClassIndividuals(clstmpHighBOD);
-				removeClassIndividuals(clstmpGoodBOD);
+//				OWLClass clstmpModerateBOD = owlDataFactory.getOWLClass("inwsr:ModerateBODMeasurement", prefixManager);
+//				OWLClass clstmpGoodBOD = owlDataFactory.getOWLClass("inwsr:GoodBODMeasurement", prefixManager);
+//				OWLClass clstmpHighBOD = owlDataFactory.getOWLClass("inwsr:HighBODMeasurement", prefixManager);
+//				printClassIndividuals(clstmpModerateBOD,"MEDIUM");
+//				printClassIndividuals(clstmpHighBOD, "HIGH");
+//				printClassIndividuals(clstmpGoodBOD, "GOOD");
+//				removeClassIndividuals(clstmpModerateBOD);
+//				removeClassIndividuals(clstmpHighBOD);
+//				removeClassIndividuals(clstmpGoodBOD);
+
+				for(int i = 0; i < this.results.size(); i++){
+					JSONObject result = (JSONObject)this.results.get(i);
+					JSONArray states = (JSONArray)result.get("states");
+					Boolean correct = true;
+					OWLClass owlClass = null;
+					String state = "";
+					for(int j= 0; j< states.size(); j++) {
+						owlClass= owlDataFactory.getOWLClass((String)states.get(j), prefixManager);
+						NodeSet<OWLNamedIndividual> individualsNodeSet = reasoner.getInstances(owlClass, false);
+						if(individualsNodeSet.isEmpty()){
+							correct = false;
+						}else{
+							state += states.get(j) + " ";
+						}
+					}
+					if(result.get("action").equals("PRINT") && correct){
+						printClassIndividuals(owlClass,state);
+						removeClassIndividuals(owlClass);
+					}
+				}
+
 
 				OWLClass tmpObservation = owlDataFactory.getOWLClass("ssn:Observation", this.prefixManager);
 				removeClassIndividuals(tmpObservation);
-				//TODO: find way to remove load ontology
 
 			}
 		}catch (FileNotFoundException ex) {
@@ -189,28 +217,6 @@ public class RDFResultsFormatter extends ResultFormatter {
 			return sb.toString();
 		}
 	}
-	public void printModerateClassIndividuals(OWLClass cl) {
-		NodeSet<OWLNamedIndividual> individualsNodeSet = reasoner.getInstances(cl, false);
-		Set<OWLNamedIndividual> individuals = individualsNodeSet.getFlattened();
-		for (OWLNamedIndividual ind : individuals) {
-			String indName = ind.getIRI().toString().substring(ind.getIRI().toString().indexOf("#") + 1);
-			System.out.println("MODERATE status detected: " + indName);
-			// look up all property assertions
-			OWLObjectProperty foundPollutionSourcesOP = owlDataFactory.getOWLObjectProperty("inwsr:foundPollutionSources", prefixManager);
-			for (OWLObjectProperty op : ontology.getObjectPropertiesInSignature()) {
-				assert op != null;
-				NodeSet<OWLNamedIndividual> foundPollSourcesNodeSet = reasoner.getObjectPropertyValues(ind, op);
-				for (OWLNamedIndividual pollSourcesInd : foundPollSourcesNodeSet.getFlattened()) {
-					if (op.getIRI().equals(foundPollutionSourcesOP.getIRI())) {
-						//assertNotNull(value);
-						// use the value individuals
-						System.out.println("Pollution source: " + ReturnIRIResourceName(pollSourcesInd.getIRI().toString()).replace('_', ' '));
-					}
-				}
-			}
-		}
-
-	}
 	public String ReturnIRIResourceName(String iri) {
 		return iri.substring(iri.indexOf("#") + 1);
 	}
@@ -224,29 +230,12 @@ public class RDFResultsFormatter extends ResultFormatter {
 			owlOntologyManager.removeAxiom(ontology, newClassAxiom);
 		}
 	}
-	public void printGoodHighClassIndividuals(OWLClass cl, String statusName) {
+	public void printClassIndividuals(OWLClass cl, String state) {
 		NodeSet<OWLNamedIndividual> individualsNodeSet = reasoner.getInstances(cl, false);
 		Set<OWLNamedIndividual> individuals = individualsNodeSet.getFlattened();
 		for (OWLNamedIndividual ind : individuals) {
 			String indName = ind.getIRI().toString().substring(ind.getIRI().toString().indexOf("#") + 1);
-			if (!indName.equals("GoodBODMeasurement_11")) {
-				System.out.println(statusName + " status detected: " + indName);
-			}
-
-			// look up all property assertions
-//            OWLObjectProperty foundPollutionSourcesOP = _owlDataFactory.getOWLObjectProperty("inwsr:foundPollutionSources", _prefixManager);
-//            for (OWLObjectProperty op : _newOnto.getObjectPropertiesInSignature()) {
-//                assert op != null;
-//                NodeSet<OWLNamedIndividual> foundPollSourcesNodeSet = _reasoner.getObjectPropertyValues(ind, op);
-//                for (OWLNamedIndividual pollSourcesInd : foundPollSourcesNodeSet.getFlattened()) {
-//                    if(op.getIRI().equals(foundPollutionSourcesOP.getIRI()))
-//                    {
-//                        //assertNotNull(value);
-//                        // use the value individuals
-//                        System.out.println("Pollution source: " + pollSourcesInd);
-//                    }
-//                }
-//            }
+			System.out.println(indName + " : " + state);
 		}
 	}
 

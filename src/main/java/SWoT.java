@@ -144,9 +144,9 @@ class SWoT {
         resultProxy = this.sparqlEngine.registerQuery(query, false);
         return resultProxy;
     }
-    void addObserver(CsparqlQueryResultProxy resultProxy, String converterPath){
+    void addObserver(CsparqlQueryResultProxy resultProxy, String converterPath, JSONArray results){
         if (resultProxy != null) {
-            resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine, converterPath));
+            resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine, converterPath, results));
         }
     }
     public OWLOntology getOntology() {
@@ -221,11 +221,12 @@ class SWoT {
 
             swot.initSPARQLEngine();
             JSONArray queries = (JSONArray)jsonObject.get("queries");
+            JSONArray results = (JSONArray)jsonObject.get("results");
             Iterator queriesIterator = queries.iterator();
             while(queriesIterator.hasNext()) {
                 CsparqlQueryResultProxy c = swot.addQuery((String)queriesIterator.next());
                 String converterPath = (String)jsonObject.get("SWRLOntologyConverterLocation");
-                swot.addObserver(c,converterPath);
+                swot.addObserver(c,converterPath, results);
             }
             System.out.println("Queries Loaded");
 
