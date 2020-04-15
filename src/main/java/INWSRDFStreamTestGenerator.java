@@ -13,6 +13,7 @@ package streamer;
 
 import java.io.StringWriter;
 
+import com.hp.hpl.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,12 +39,12 @@ public class INWSRDFStreamTestGenerator extends RdfStream implements Runnable {
 
 	private int c = 1;
 	private boolean keepRunning = false;
-	private String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
-	private String dul = "http://www.loa-cnr.it/ontologies/DUL.owl#";
-	private String inwsCore = "http://inwatersense.uni-pr.edu/ontologies/inws-core.owl#";
+	private static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
+	private static String dul = "http://www.loa-cnr.it/ontologies/DUL.owl#";
+	private static String inwsCore = "http://inwatersense.uni-pr.edu/ontologies/inws-core.owl#";
 	private String inwsPoll = "http://inwatersense.uni-pr.edu/ontologies/inws-pollutants.owl#";
 	private String geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
-	private String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	private static String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
 	public INWSRDFStreamTestGenerator(final String iri) {
 		super(iri); // inws/stream
@@ -125,6 +126,7 @@ public class INWSRDFStreamTestGenerator extends RdfStream implements Runnable {
 			this.put(q);
 			//System.out.println(q.toString());
 			q = new RdfQuadruple(super.getIRI() + "#ov_"+n, this.dul + "hasDataValue", val + "^^http://www.w3.org/2001/XMLSchema#double", tempTS);
+			System.out.println(q.toString());
 			this.put(q);
 			q = new RdfQuadruple(super.getIRI()+"#obs_" + n, this.inwsCore + "observationResultLocation", this.inwsCore + "ms" + location_rnd , tempTS);
 			this.put(q);
@@ -173,7 +175,12 @@ public class INWSRDFStreamTestGenerator extends RdfStream implements Runnable {
 		return truncatedAVGval;
 	}
 
+
+
+
 	public static void main(String[] args) {
+
 		System.out.println(dumpRelatedStaticKnowledge(10));
+
 	}
 }

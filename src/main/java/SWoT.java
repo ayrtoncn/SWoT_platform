@@ -31,6 +31,7 @@ import streamer.INWSRDFStreamTestGenerator;
 class SWoT {
     private static Logger logger = LoggerFactory.getLogger(SWoT.class);
     private OWLOntology ontology;
+    private OWLOntology ontologyResult;
     private OWLOntologyManager owlOntologyManager;
     private OWLDataFactory owlDataFactory;
     private SWRLRuleEngine ruleEngine;
@@ -65,6 +66,8 @@ class SWoT {
         OWLDocumentFormat format = this.ontology.getOWLOntologyManager().getOntologyFormat(this.ontology);
         if (format.isPrefixOWLOntologyFormat())
             prefixManager.copyPrefixesFrom(format.asPrefixOWLOntologyFormat().getPrefixName2PrefixMap());
+
+        this.ontologyResult = this.owlOntologyManager.loadOntologyFromOntologyDocument(new FileInputStream(path));
     };
 
     void importOntology(String ontologyIRI, String ontologyPath) throws FileNotFoundException, OWLOntologyCreationException {
@@ -105,7 +108,7 @@ class SWoT {
         owlReasoner = reasonerFactory.createReasoner(this.ontology);
         owlReasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
 
-        ruleEngine = SWRLAPIFactory.createSWRLRuleEngine(this.ontology, this.prefixManager);
+        ruleEngine = SWRLAPIFactory.createSWRLRuleEngine(this.ontologyResult, this.prefixManager);
         queryEngine = SWRLAPIFactory.createSQWRLQueryEngine(this.ontology, this.prefixManager);
     }
 
@@ -134,6 +137,8 @@ class SWoT {
     CsparqlQueryResultProxy addQuery(String query) throws ParseException {
         CsparqlQueryResultProxy resultProxy = null;
         String streamUrl = query.substring(query.indexOf("FROM STREAM") + 13, query.indexOf("[RANGE") - 2);
+
+        // TODO: delete this
         RdfStream rdfStream = new INWSRDFStreamTestGenerator(streamUrl);
 
         sparqlEngine.registerStream(rdfStream);
@@ -146,7 +151,7 @@ class SWoT {
     }
     void addObserver(CsparqlQueryResultProxy resultProxy, String converterPath, JSONArray results){
         if (resultProxy != null) {
-            resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine, converterPath, results));
+            resultProxy.addObserver(new RDFResultsFormatter(this.ruleEngine, this.ontology,this.ontologyResult, this.owlReasoner, this.prefixManager, this.owlOntologyManager, this.owlDataFactory, this.queryEngine, converterPath, results));
         }
     }
     public OWLOntology getOntology() {
