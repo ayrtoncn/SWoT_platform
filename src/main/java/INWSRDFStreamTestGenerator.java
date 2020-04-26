@@ -1,14 +1,3 @@
-package streamer;
-/*
- * @(#)TestGenerator.java   1.0   18/set/2009
- *
- * Copyright 2009-2009 Politecnico di Milano. All Rights Reserved.
- *
- * This software is the proprietary information of Politecnico di Milano.
- * Use is subject to license terms.
- *
- * @(#) $Id$
- */
 
 
 import java.io.StringWriter;
@@ -28,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -45,9 +35,20 @@ public class INWSRDFStreamTestGenerator extends RdfStream implements Runnable {
 	private String inwsPoll = "http://inwatersense.uni-pr.edu/ontologies/inws-pollutants.owl#";
 	private String geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 	private static String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	private StreamerAdapter streamerAdapter;
 
-	public INWSRDFStreamTestGenerator(final String iri) {
+	public INWSRDFStreamTestGenerator(String iri) {
 		super(iri); // inws/stream
+		try {
+			Class c = Class.forName("Adapter");
+			this.streamerAdapter = (StreamerAdapter)c.newInstance();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Streaming of observations started...");
 	}
 
@@ -58,88 +59,18 @@ public class INWSRDFStreamTestGenerator extends RdfStream implements Runnable {
 	@Override
 	public void run() {
 		keepRunning = true;
-		long tempTS;
-		int n;
-		double val = 0;
-
-		//choose WQ parameter randomly
-		String[] waterQualityArray = new String[]
-		  {
-//                  "pH",
-			"BiochemicalOxygenDemand",
-//                  "Arsenic",
-//                  "BenthicInvertebrateFauna",
-//                  "ChromiumIII",
-//                  "Cyanide",
-//                  "Diazinon",
-//                  "Dimethoate",
-//                  "Fluoride",
-//                  "TotalAmmonia",
-//                  "Glyphosate"
-		  };
-		int randomWQ;
-		String WQ;
-		int location_rnd;
-		int ms_number = 10;
 		while (keepRunning) {
-			tempTS = System.currentTimeMillis();
-			RdfQuadruple q;
-			randomWQ = (int) randomWithRange(0, waterQualityArray.length);
-
-			// n - per numer te individual-it, val - per vlera te observimeve
-			n = (int) randomWithRange(0, 10000);
-			//lokacioni
-			location_rnd = (int) randomWithRange(9, ms_number+1);
-			WQ = waterQualityArray[randomWQ];
-
-			//generate sensor values based on WQ thresholds
-			switch(WQ){
-				case "Arsenic": val = randomWithRange(10, 30); break;
-				case "BenthicInvertebrateFauna": val = randomWithRange(0.4, 0.9); break;
-				case "ChromiumIII": val = randomWithRange(0, 5); break;
-				case "Cyanide": val = randomWithRange(5, 12); break;
-				case "Diazinon": val = randomWithRange(0, 0.015); break;
-				case "pH": val = randomWithRange(1, 14); break;
-				case "Dimethoate": val = randomWithRange(0, 1.2); break;
-				case "BiochemicalOxygenDemand":
-					val = randomWithRange(0.7, 2);    //bone 1 -> 0
-					break;
-				case "Fluoride": val = randomWithRange(300, 650); break;
-				case "Glyphosate": val = randomWithRange(40, 75); break;
-				case "TotalPhosphorus": val = randomWithRange(0, 15); break;
-				case "TotalAmmonia": val = randomWithRange(0.001, 0.080); break;
-				case "Copper": val = randomWithRange(0, 15); break;
-				case "WaterHardness": val = randomWithRange(0, 200); break;
+			ArrayList<RdfQuadruple> data = streamerAdapter.getData();
+			for (int counter = 0; counter < data.size(); counter++) {
+				this.put(data.get(counter));
 			}
-
-			//System.out.println("# "+ this.c +": " + System.currentTimeMillis());
-			q = new RdfQuadruple(super.getIRI() + "#obs_"+n, this.rdf + "type", this.ssn + "Observation", tempTS);
-			this.put(q);
-			//System.out.println(q.toString());
-			q = new RdfQuadruple(super.getIRI() + "#obs_"+n, this.ssn + "qualityOfObservation", this.inwsCore + WQ, tempTS);
-			this.put(q);
-			//System.out.println(q.toString());
-			q = new RdfQuadruple(super.getIRI() + "#obs_"+n, this.ssn + "observationResult", super.getIRI() + "#so_"+n, tempTS);
-			this.put(q);
-			//System.out.println(q.toString());
-			q = new RdfQuadruple(super.getIRI() + "#so_"+n, this.ssn + "hasValue", super.getIRI() + "#ov_"+n, tempTS);
-			this.put(q);
-			//System.out.println(q.toString());
-			q = new RdfQuadruple(super.getIRI() + "#ov_"+n, this.dul + "hasDataValue", val + "^^http://www.w3.org/2001/XMLSchema#double", tempTS);
-			System.out.println(q.toString());
-			this.put(q);
-			q = new RdfQuadruple(super.getIRI()+"#obs_" + n, this.inwsCore + "observationResultLocation", this.inwsCore + "ms" + location_rnd , tempTS);
-			this.put(q);
-
-			c++;
 
 			try {
 				Thread.sleep(1000);  //2000000=26 min.        //1 000 ms = 1 sec, 60 000 = 1 min, 100 000 = 1.5 min, 200 000 ms = 3.3 min,  300 000 ms= 5 min
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			location_rnd++;
-			randomWQ++;
+
 		}
 	}
 

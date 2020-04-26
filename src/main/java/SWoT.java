@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
-import streamer.INWSRDFStreamTestGenerator;
 
 class SWoT {
     private static Logger logger = LoggerFactory.getLogger(SWoT.class);
@@ -108,7 +107,7 @@ class SWoT {
         owlReasoner = reasonerFactory.createReasoner(this.ontology);
         owlReasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
 
-        ruleEngine = SWRLAPIFactory.createSWRLRuleEngine(this.ontologyResult, this.prefixManager);
+        ruleEngine = SWRLAPIFactory.createSWRLRuleEngine(this.ontology, this.prefixManager);
         queryEngine = SWRLAPIFactory.createSQWRLQueryEngine(this.ontology, this.prefixManager);
     }
 

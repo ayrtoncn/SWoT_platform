@@ -7,7 +7,6 @@ import com.hp.hpl.jena.util.PrintUtil;
 import eu.larkc.csparql.cep.api.RdfQuadruple;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import streamer.INWSRDFStreamTestGenerator;
 
 import java.io.FileWriter;
 import java.io.IOException;
