@@ -7,14 +7,14 @@ JSON
 {
     "StreamerAdapter": [
         {
-          "URI"               : "URI that link to CSPARQL query"
+          "URI"               : "URI that link to CSPARQL query",
           "AdapterClassName"  : "Streamer Adapter class name for input data"
         }
     ],
     "SWRLOntologyLocation": "Ontology Absolute Path",
     "rules":[
         {
-          "ruleName"  : "rule name"
+          "ruleName"  : "rule name",
           "rule"      : "rule content"
         },
     ],
