@@ -33,4 +33,16 @@ JSON
 	}
     ]
 }
+
+```
+
+Converter File
+===============
+OWL
+----
+```
+| Variable | Usage                             |
+|----------|-----------------------------------|
+| arg+n    | take n value from C-SPARQL output |
+| n        | random number                     |
 ```
