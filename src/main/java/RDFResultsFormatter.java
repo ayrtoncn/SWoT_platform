@@ -5,6 +5,7 @@ import eu.larkc.csparql.common.RDFTuple;
 import eu.larkc.csparql.core.ResultFormatter;
 import eu.larkc.csparql.core.engine.CsparqlQueryResultProxy;
 import javafx.util.Pair;
+import okhttp3.*;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -170,7 +171,7 @@ public class RDFResultsFormatter extends ResultFormatter {
 				text = text.replaceAll("&time", obsTime);
 				InputStream newFileInputStream = new ByteArrayInputStream(text.getBytes());
 				loadOWLFromFile(newFileInputStream);
-				saveOWL(ontology.getOWLOntologyManager().getOntologyFormat(ontology), owlOntologyManager, ontology, "condition.owl");
+//				saveOWL(ontology.getOWLOntologyManager().getOntologyFormat(ontology), owlOntologyManager, ontology, "condition.owl");
 				StopWatch stopWatch = new StopWatch();
 				stopWatch.start();
 				this.ruleEngine.infer();
@@ -180,14 +181,14 @@ public class RDFResultsFormatter extends ResultFormatter {
 				totProcTime = totProcTime + stopWatch.getTotalTimeMillis();
 				reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
 
-				saveOWL(this.ontology.getOWLOntologyManager().getOntologyFormat(this.ontologyResult), this.owlOntologyManager, ontologyResult, "result3.owl");
+//				saveOWL(this.ontology.getOWLOntologyManager().getOntologyFormat(this.ontology), this.owlOntologyManager, ontology, "result3.owl");
 
-				OWLClass clstmpModerateBOD = owlDataFactory.getOWLClass("inwsr:ModerateBODMeasurement", prefixManager);
-				OWLClass clstmpGoodBOD = owlDataFactory.getOWLClass("inwsr:GoodBODMeasurement", prefixManager);
-				OWLClass clstmpHighBOD = owlDataFactory.getOWLClass("inwsr:HighBODMeasurement", prefixManager);
-				printClassIndividuals(clstmpModerateBOD,"MEDIUM");
-				printClassIndividuals(clstmpHighBOD, "HIGH");
-				printClassIndividuals(clstmpGoodBOD, "GOOD");
+//				OWLClass clstmpModerateBOD = owlDataFactory.getOWLClass("inwsr:ModerateBODMeasurement", prefixManager);
+//				OWLClass clstmpGoodBOD = owlDataFactory.getOWLClass("inwsr:GoodBODMeasurement", prefixManager);
+//				OWLClass clstmpHighBOD = owlDataFactory.getOWLClass("inwsr:HighBODMeasurement", prefixManager);
+//				printClassIndividuals(clstmpModerateBOD,"Moderate");
+//				printClassIndividuals(clstmpHighBOD, "HIGH");
+//				printClassIndividuals(clstmpGoodBOD, "GOOD");
 //				removeClassIndividuals(clstmpModerateBOD);
 //				removeClassIndividuals(clstmpHighBOD);
 //				removeClassIndividuals(clstmpGoodBOD);
@@ -197,10 +198,33 @@ public class RDFResultsFormatter extends ResultFormatter {
 					JSONArray states = (JSONArray)result.get("states");
 
 					OWLClass owlClass = null;
+//					OWLObjectProperty objectProperty = null;
 					String state = "";
 					NodeSet<OWLNamedIndividual> individualsNodeSet = null;
 					for(int j= 0; j< states.size(); j++) {
 						Boolean correct = true;
+//						objectProperty = owlDataFactory.getOWLObjectProperty("inwsp:isPolluted", prefixManager);
+//						OWLNamedIndividual obsLocInd = owlDataFactory.getOWLNamedIndividual("inwsc:ms10", prefixManager);
+//						OWLNamedIndividual isPolluted = owlDataFactory.getOWLNamedIndividual("inwsp:false", prefixManager);
+//						reasoner.getDataPropertyDomains()
+						OWLObjectProperty isPolluted =owlDataFactory.getOWLObjectProperty("inwsp:isPolluted", prefixManager);
+						OWLNamedIndividual obsLocInd = owlDataFactory.getOWLNamedIndividual("inwsc:ms9", prefixManager);
+						OWLNamedIndividual polluted = owlDataFactory.getOWLNamedIndividual("inwsp:false", prefixManager);
+						for (OWLObjectProperty op : ontology.getObjectPropertiesInSignature()) {
+							assert op != null;
+							if (op.getIRI().equals(isPolluted.getIRI())) {
+								NodeSet<OWLNamedIndividual> pollutionInd = reasoner.getObjectPropertyValues(obsLocInd, isPolluted);
+								for (OWLNamedIndividual ind : pollutionInd.getFlattened()) {
+									System.out.println(ind);
+								}
+								NodeSet<OWLNamedIndividual> pollutionInd2 = reasoner.getObjectPropertyValues(polluted, isPolluted);
+								for (OWLNamedIndividual ind : pollutionInd2.getFlattened()) {
+									System.out.println(ind);
+								}
+							}
+						}
+
+
 						owlClass= owlDataFactory.getOWLClass((String)states.get(j), prefixManager);
 						individualsNodeSet = reasoner.getInstances(owlClass, false);
 						if(individualsNodeSet.isEmpty()){
@@ -208,23 +232,32 @@ public class RDFResultsFormatter extends ResultFormatter {
 						}else{
 							state += states.get(j) ;
 						}
-						if(result.get("action").equals("WEB_SERVICE") && correct){
+						if(false && result.get("action").equals("WEB_SERVICE") && correct){
 							if (result.get("METHOD").equals("GET")){
 								String url = (String) result.get("URL");
-								ArrayList<Pair<String,String>> headers = new ArrayList();
-								JSONObject headerJson = (JSONObject)result.get("HEADERS");
-								for(Iterator iterator = headerJson.keySet().iterator(); iterator.hasNext();) {
-									String key = (String) iterator.next();
-									Pair<String,String> p = new Pair<>(key, (String)headerJson.get(key));
+								ArrayList<Pair<String,String>> parameters = new ArrayList();
+								JSONObject parametersJson = (JSONObject)result.get("parameters");
+								Set<OWLNamedIndividual> individuals = individualsNodeSet.getFlattened();
+								for (OWLNamedIndividual ind : individuals) {
+									String indName = ind.getIRI().toString().substring(ind.getIRI().toString().indexOf("#") + 1);
+									for(Iterator iterator = parametersJson.keySet().iterator(); iterator.hasNext();) {
+										String key = (String) iterator.next();
+										String param = (String)parametersJson.get(key);
+										param = param.replaceAll("&value",indName);
+										Pair<String,String> p = new Pair<>(key, param);
+										parameters.add(p);
+									}
+									sendGet(url, parameters);
 								}
-//							sendGet(url, headers);
+
+
 							}else if (result.get("METHOD").equals("POST")){
 								String url = (String) result.get("URL");
 								String body = (String) result.get("BODY");
 //							sendPost(url, body);
 							}
 
-						} else if(result.get("action").equals("STREAM") && correct){
+						} else if(false && 	result.get("action").equals("STREAM") && correct){
 							String kafkaBrokers = (String) result.get("KAFKA_BROKERS");
 							String clientID = (String) result.get("CLIENT_ID");
 							Integer msgCount = 10;
@@ -250,7 +283,7 @@ public class RDFResultsFormatter extends ResultFormatter {
 
 
 						}
-						removeClassIndividuals(owlClass);
+//						removeClassIndividuals(owlClass);
 					}
 
 
@@ -263,7 +296,7 @@ public class RDFResultsFormatter extends ResultFormatter {
 //					owlOntologyManager.removeAxiom(ontology, ax);
 //				}
 				removeClassIndividuals(tmpObservation);
-				saveOWL(ontologyResult.getOWLOntologyManager().getOntologyFormat(ontologyResult), owlOntologyManager, ontologyResult, "result.owl");
+//				saveOWL(ontologyResult.getOWLOntologyManager().getOntologyFormat(ontologyResult), owlOntologyManager, ontologyResult, "result.owl");
 				saveOWL(ontology.getOWLOntologyManager().getOntologyFormat(ontology), owlOntologyManager, ontology, "result2.owl");
 
 			}
@@ -330,35 +363,30 @@ public class RDFResultsFormatter extends ResultFormatter {
 		}
 	}
 
-//	private void sendGet(String url, ArrayList<Pair<String,String>> headers_array) {
-//
-//		HttpGet request = new HttpGet(url);
-//
-//		// add request headers
-//		for (Pair <String,String> temp : headers_array)
-//		{
-//			request.addHeader(temp.getKey(),temp.getValue());
-//		}
-//
-//		try (CloseableHttpResponse response = httpClient.execute(request)) {
-//
-//			// Get HttpResponse Status
-//			HttpEntity entity = response.getEntity();
-//			Header headers = entity.getContentType();
-//
-//			if (entity != null) {
-//				// return it as a String
-//				String result = EntityUtils.toString(entity);
-//				System.out.println(result);
-//			}
-//
-//		} catch (ClientProtocolException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//	}
+	private void sendGet(String url, ArrayList<Pair<String,String>> parameters) {
+		OkHttpClient client = new OkHttpClient();
+
+		HttpUrl.Builder urlBuilder
+				= HttpUrl.parse(url).newBuilder();
+		for(Pair<String,String> parameter: parameters){
+			urlBuilder.addQueryParameter(parameter.getKey(), (parameter.getValue()));
+		}
+
+
+		String urlWithParam = urlBuilder.build().toString();
+		Request request = new Request.Builder()
+				.url(urlWithParam)
+				.build();
+
+		Call call = client.newCall(request);
+		try {
+			Response response = call.execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+	}
 //
 //	private void sendPost(String url_path,String body) {
 //		try {

@@ -1,10 +1,4 @@
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.util.PrintUtil;
-import eu.larkc.csparql.cep.api.RdfQuadruple;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 
@@ -13,7 +7,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -75,7 +68,7 @@ public class Main {
 			RDFDataMgr.write(fw, main.model,Lang.NQUADS);
 			RDFDataMgr.write(sw, main.model,Lang.NQUADS);
 		} catch (IOException ex) {
-			java.util.logging.Logger.getLogger(INWSRDFStreamTestGenerator.class.getName()).log(Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(RDFStreamer.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		long tempTS = System.currentTimeMillis();
 //		StreamRDFWriter.write ( out, m.getGraph (), jlang.getLeft () );

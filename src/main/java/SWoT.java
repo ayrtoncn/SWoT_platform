@@ -1,9 +1,8 @@
+import com.google.gson.JsonObject;
 import eu.larkc.csparql.cep.api.RdfStream;
 import eu.larkc.csparql.core.engine.CsparqlEngine;
 import eu.larkc.csparql.core.engine.CsparqlEngineImpl;
 import eu.larkc.csparql.core.engine.CsparqlQueryResultProxy;
-import org.apache.jena.atlas.json.JsonAccess;
-import org.apache.jena.atlas.json.JsonArray;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -135,18 +134,17 @@ class SWoT {
 
     CsparqlQueryResultProxy addQuery(String query) throws ParseException {
         CsparqlQueryResultProxy resultProxy = null;
-        String streamUrl = query.substring(query.indexOf("FROM STREAM") + 13, query.indexOf("[RANGE") - 2);
-
-        // TODO: delete this
-        RdfStream rdfStream = new INWSRDFStreamTestGenerator(streamUrl);
-
-        sparqlEngine.registerStream(rdfStream);
-
-        final Thread t = new Thread((Runnable) rdfStream);
-        t.start();
-
         resultProxy = this.sparqlEngine.registerQuery(query, false);
         return resultProxy;
+    }
+
+    void addStreamer(String URI, String className){
+
+        RdfStream rdfStream = new RDFStreamer(URI, className);
+        sparqlEngine.registerStream(rdfStream);
+//
+//        final Thread t = new Thread((Runnable) rdfStream);
+//        t.start();
     }
     void addObserver(CsparqlQueryResultProxy resultProxy, String converterPath, JSONArray results){
         if (resultProxy != null) {
@@ -195,7 +193,7 @@ class SWoT {
 
     public static void main(String[] args) {
         String jsonLocation = args[0];
-        jsonLocation = new File("").getAbsolutePath() + "\\src\\main\\resources\\" + jsonLocation;
+        jsonLocation = new File("").getAbsolutePath() + "\\"  + jsonLocation;
         JSONParser jsonParser =  new JSONParser();
         SWoT swot = new SWoT();
         try{
@@ -217,13 +215,22 @@ class SWoT {
             JSONArray rules = (JSONArray)jsonObject.get("rules");
             Iterator rulesIterator = rules.iterator();
             while(rulesIterator.hasNext()) {
-                JSONArray rule = ((JSONArray)rulesIterator.next());
-                swot.addNewRule((String)rule.get(0),(String)rule.get(1));
+                JSONObject rule = ((JSONObject)rulesIterator.next());
+                swot.addNewRule((String)rule.get("ruleName"),(String)rule.get("rule"));
             }
             swot.inferRule();
             System.out.println("Rules Loaded");
 
             swot.initSPARQLEngine();
+
+            JSONArray streamerAdapters = (JSONArray)jsonObject.get("StreamerAdapter");
+            Iterator StreamerAdaptersIterator = streamerAdapters.iterator();
+            while(StreamerAdaptersIterator.hasNext()) {
+                JSONObject streamerAdapter = (JSONObject) StreamerAdaptersIterator.next();
+                swot.addStreamer((String)streamerAdapter.get("URI"),(String)streamerAdapter.get("AdapterClassName"));
+            }
+            System.out.println("Streamer Adapter Loaded");
+
             JSONArray queries = (JSONArray)jsonObject.get("queries");
             JSONArray results = (JSONArray)jsonObject.get("results");
             Iterator queriesIterator = queries.iterator();
@@ -233,6 +240,7 @@ class SWoT {
                 swot.addObserver(c,converterPath, results);
             }
             System.out.println("Queries Loaded");
+            while(true){}
 
         }catch (org.json.simple.parser.ParseException e) {
             e.printStackTrace();
