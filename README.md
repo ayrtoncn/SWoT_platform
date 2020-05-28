@@ -41,8 +41,8 @@ Converter File
 OWL
 ----
 ```
-| Variable | Usage                             |
-|----------|-----------------------------------|
-| arg+n    | take n value from C-SPARQL output |
-| n        | random number                     |
+| Variable | Usage                                       |
+|----------|---------------------------------------------|
+| &arg+n   | take the nth value from the C-SPARQL output |
+| &n       | random number                               |
 ```
