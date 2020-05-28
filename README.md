@@ -7,15 +7,15 @@ JSON
 {
     "StreamerAdapter": [
         {
-          "URI"               : "URI that link to CSPARQL query",
-          "AdapterClassName"  : "Streamer Adapter class name for input data"
+		  "URI"               : "URI that link to CSPARQL query",
+		  "AdapterClassName"  : "Streamer Adapter class name for input data"
         }
     ],
     "SWRLOntologyLocation": "Ontology Absolute Path",
     "rules":[
         {
-          "ruleName"  : "rule name",
-          "rule"      : "rule content"
+		  "ruleName"  : "rule name",
+		  "rule"      : "rule content"
         },
     ],
     "queries" :[
@@ -23,15 +23,14 @@ JSON
     ],
     "SWRLOntologyConverterLocation" : "Rdf to OWL converter Absolute Path",
     "results": [
-		{
-			"states": [
-				"OWLClass Name"
-			],
-			"action": "WEB_SERVICE/STREAM",
-			"URL": "URLPATH",
-			"METHOD": "GET/POST"
-		}
-	]
-}
+	{
+		"states": [
+			"OWLClass Name"
+		],
+		"action": "WEB_SERVICE/STREAM",
+		"URL": "URLPATH",
+		"METHOD": "GET/POST"
+	}
+    ]
 }
 ```
