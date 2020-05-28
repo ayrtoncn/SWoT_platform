@@ -12,7 +12,7 @@ JSON
         }
     ],
     "SWRLOntologyLocation": "Ontology Absolute Path",
-    "rules:[
+    "rules":[
         {
           "ruleName"  : "rule name"
           "rule"      : "rule content"
