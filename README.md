@@ -43,6 +43,6 @@ OWL
 ```
 | Variable | Usage                                       |
 |----------|---------------------------------------------|
-| &arg+n   | take the nth value from the C-SPARQL output |
+| &arg[n]   | take the nth value from the C-SPARQL output |
 | &n       | random number                               |
 ```
