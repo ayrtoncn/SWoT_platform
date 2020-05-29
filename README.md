@@ -7,7 +7,7 @@ JSON
 {
     "StreamerAdapter": [
         {
-		  "URI"               : "URI that link to CSPARQL query",
+		  "IRI"               : "IRI that link to CSPARQL query",
 		  "AdapterClassName"  : "Streamer Adapter class name for input data"
         }
     ],
