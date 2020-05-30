@@ -27,7 +27,7 @@ JSON
 		"states": [
 			"OWLClass Name"
 		],
-		"action": "WEB_SERVICE/STREAM",
+		"action": "Choose one WEB_SERVICE OR STREAM",
 		"URL": "URLPATH",
 		"METHOD": "GET/POST"
 	}
